@@ -14,7 +14,7 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
+                withSonarQubeEnv('sonarqube-scanner') {
                     bat 'mvn clean package'
                     bat ''' mvn clean verify sonar:sonar -Dsonar.projectKey=xmart-java -Dsonar.projectName='xmart-java' -Dsonar.host.url=http://localhost:9000 '''
                     echo 'SonarQube Analysis Completed'
