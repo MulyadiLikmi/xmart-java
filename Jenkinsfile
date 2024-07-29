@@ -1,21 +1,3 @@
-import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
-
-def retryForTimeoutExceeded(count = 3, Closure closure) {
-    for (int i = 1; i <= count; i++) {
-        try {
-            closure()
-            break
-        } catch (FlowInterruptedException error) {
-            int retriesLeft = count - i
-            def hasTimeoutExceeded = error.causes[0].getClass().toString() == 'class org.jenkinsci.plugins.workflow.steps.TimeoutStepExecution$ExceededTimeout'
-            println "Timeout Exceeded for closure.\nRetries left: $retriesLeft"
-            if (retriesLeft == 0 || !hasTimeoutExceeded) {
-                throw error
-            }
-        }
-    }
-}
-
 pipeline {
     agent any
     tools {
@@ -41,21 +23,13 @@ pipeline {
                 }
             }
         }
-        stage('Quality Gate') {
+        stage("Quality Gate") {
             steps {
-                script {
-                    retryForTimeoutExceeded {
-                        timeout(time: 5, unit: 'MINUTES') {
-                            // Just in case something goes wrong, pipeline will be killed after a timeout
-                            def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-                            if (qg.status != 'OK') {
-                                error "Pipeline aborted due to sonar quality gate failure: ${qg.status}"
-                            }
-                        }
-                    }
-                }
+                waitForQualityGate abortPipeline: true
+                echo 'Quality Gate Completed'
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -64,17 +38,19 @@ pipeline {
                 }
             }
         }
+
         stage('Docker Push') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'dockerhub-password', variable: 'dockerhub-password-binding')]) {
-                        bat '''docker login -u mulyadikamsul -p "%dockerhub-password-binding%"'''
+                        bat ''' docker login -u mulyadikamsul -p "%dockerhub-password-binding%" '''
                     }
                     bat 'docker push mulyadikamsul/xmart-java'
                 }
             }
         }
-        stage('Docker Run') {
+
+        stage ('Docker Run') {
             steps {
                 script {
                     bat 'docker run -d --name xmart-java -p 8099:8080 mulyadikamsul/xmart-java'
@@ -82,6 +58,7 @@ pipeline {
                 }
             }
         }
+
     }
     post {
         always {
