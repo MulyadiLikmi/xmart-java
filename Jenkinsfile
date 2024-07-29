@@ -17,7 +17,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube-server') { // Use the correct SonarQube configuration name
                     script {
                         def sonarScannerHome = tool name: 'SonarScan', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                        bat """${sonarScannerHome}\\bin\\sonar-scanner.bat -Dsonar.projectKey=xmart-java -Dsonar.projectName=xmart-java -Dsonar.sources=src -Dsonar.sourceEncoding=UTF-8"""
+                        bat """${sonarScannerHome}\\bin\\sonar-scanner.bat -Dsonar.projectKey=xmart-java -Dsonar.projectName=xmart-java -Dsonar.sources=src -Dsonar.sourceEncoding=UTF-8 -Dsonar.java.binaries=target/classes"""
                     }
                     echo 'SonarQube Analysis Completed'
                 }
