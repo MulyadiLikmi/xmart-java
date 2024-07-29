@@ -1,3 +1,5 @@
+import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
+
 def retryForTimeoutExceeded(count = 3, Closure closure) {
     for (int i = 1; i <= count; i++) {
         try {
