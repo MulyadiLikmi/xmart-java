@@ -39,6 +39,7 @@ pipeline {
             }
         }
 
+        sleep 50
         stage('Docker Push') {
             steps {
                 script {
