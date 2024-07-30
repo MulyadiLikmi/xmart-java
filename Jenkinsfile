@@ -23,6 +23,15 @@ pipeline {
                 }
             }
         }
+        stage('Sleep') {
+            steps {
+                script {
+                    sleep 50
+                    echo 'Sleep Completed'
+                }
+            }
+        }
+
         stage("Quality Gate") {
             steps {
                 waitForQualityGate abortPipeline: true
@@ -39,7 +48,6 @@ pipeline {
             }
         }
 
-        sleep 50
         stage('Docker Push') {
             steps {
                 script {
