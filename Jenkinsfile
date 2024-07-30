@@ -51,8 +51,8 @@ pipeline {
         stage('Docker Push') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'dockerhub-password', variable: 'dockerhub-password-binding')]) {
-                        bat ''' docker login -u mulyadikamsul -p "%dockerhub-password-binding%" '''
+                    withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhub-password')]) {
+                        bat ''' docker login -u mulyadikamsul -p "%dockerhub-password%" '''
                     }
                     bat 'docker push mulyadikamsul/xmart-java'
                 }
