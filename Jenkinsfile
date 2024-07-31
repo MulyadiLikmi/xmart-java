@@ -26,7 +26,7 @@ pipeline {
         stage('Sleep') {
             steps {
                 script {
-                    sleep 50
+                    sleep 60
                     echo 'Sleep Completed'
                 }
             }
