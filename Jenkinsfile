@@ -23,6 +23,14 @@ pipeline {
                 }
             }
         }
+        stage('Sleep') {
+            steps {
+                script {
+                    sleep 50
+                    echo 'Sleep Completed'
+                }
+            }
+        }
 
         stage("Quality Gate") {
             steps {
