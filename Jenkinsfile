@@ -73,5 +73,19 @@ pipeline {
         always {
             bat 'docker logout'
         }
+        success {
+            script{
+                 withCredentials([string(credentialsId: 'telegram-token', variable: 'telegramToken'), string(credentialsId: 'telegram-chat-id', variable: 'chatId')]) {
+                    bat ''' curl -s -X POST https://api.telegram.org/bot"%telegramToken%"/sendMessage -d chat_id="%chatId%" -d text="%TEXT_SUCCESS_BUILD%" '''
+                 }
+            }
+        }
+        failure {
+            script{
+                withCredentials([string(credentialsId: 'telegram-token', variable: 'telegramToken'), string(credentialsId: 'telegram-chat-id', variable: 'chatId')]) {
+                    bat ''' curl -s -X POST https://api.telegram.org/bot"%telegramToken%"/sendMessage -d chat_id="%chatId%" -d text="%TEXT_FAILURE_BUILD%" '''
+                }
+            }
+        }
     }
 }
